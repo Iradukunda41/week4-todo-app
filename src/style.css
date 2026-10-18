@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/* ---------- Dark mode ---------- */
+.dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+.dark .bg-slate-50 { background-color: #0f172a; }
+.dark .bg-white { background-color: #1e293b; }
+.dark .bg-slate-100 { background-color: #334155; }
+.dark .bg-blue-50 { background-color: #1e3a5f; }
+.dark .bg-blue-100 { background-color: #1e3a8a; }
+.dark .bg-green-50 { background-color: rgba(34, 197, 94, 0.15); }
+.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.15); }
+
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300 { border-color: #334155; }
+
+.dark .text-slate-900,
+.dark .text-slate-800 { color: #f1f5f9; }
+.dark .text-slate-700 { color: #cbd5e1; }
+.dark .text-slate-600,
+.dark .text-slate-500 { color: #94a3b8; }
+.dark .text-blue-700 { color: #bfdbfe; }
+
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-200:hover { background-color: #475569; }
+
+.dark input[type="text"],
+.dark input[type="search"] {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+.dark { color-scheme: dark; }
+
+.dark .text-blue-600 { color: #60a5fa; }
+.dark .text-red-600 { color: #f87171; }
+.dark .text-orange-600 { color: #fb923c; }
+.dark .text-green-600 { color: #4ade80; }
+.dark .text-slate-400 { color: #94a3b8; }
