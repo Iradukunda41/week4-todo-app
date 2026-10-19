@@ -1,6 +1,8 @@
+
+// src/main.js
 import './style.css'
 
-/* ---------- DATA ---------- */
+/* ---------- COURSE DATA ---------- */
 const courses = [
   {
     id: 'js',
@@ -13,7 +15,7 @@ const courses = [
         title: 'Variables and Data Types',
         duration: '15 min',
         content:
-          'A variable is a container that stores a value. We declare variables with let or const: a let variable can be changed later, while a const variable cannot be reassigned. The main data types are string, number, boolean, array and object.',
+          'A variable stores a value. Use let for values that can change and const for values that cannot be reassigned. Common data types include strings, numbers, booleans, arrays, and objects.',
         quiz: [
           {
             question: 'Which keyword declares a variable that cannot be reassigned?',
@@ -31,10 +33,10 @@ const courses = [
         title: 'Functions',
         duration: '20 min',
         content:
-          'A function is a block of code you can reuse many times. Example: function greet(name) { return "Hello " + name }. The same function as an arrow function: const greet = (name) => "Hello " + name.',
+          'A function is reusable code. Example: function greet(name) { return "Hello " + name }. An arrow function can be written as const greet = (name) => "Hello " + name.',
         quiz: [
           {
-            question: 'Which keyword makes a function send a value back?',
+            question: 'Which keyword returns a value from a function?',
             options: ['return', 'break', 'print'],
             answer: 0,
           },
@@ -58,7 +60,7 @@ const courses = [
         title: 'Introduction to Algebra',
         duration: '15 min',
         content:
-          'Algebra uses letters (such as x and y) to represent unknown numbers. Example: x + 3 = 7, so x = 4.',
+          'Algebra uses letters such as x and y to represent unknown numbers. For example, x + 3 = 7, so x = 4.',
         quiz: [
           {
             question: 'If x + 5 = 12, what is x?',
@@ -103,7 +105,7 @@ const courses = [
         title: 'Motion and Speed',
         duration: '20 min',
         content:
-          'Speed is the distance travelled in a given time: speed = distance ÷ time. A car that travels 100 km in 2 hours has a speed of 50 km/h.',
+          'Speed is distance divided by time. A car travelling 100 km in 2 hours has a speed of 50 km/h.',
         quiz: [
           {
             question: 'What is the formula for speed?',
@@ -121,7 +123,7 @@ const courses = [
         title: 'Force and Energy',
         duration: '25 min',
         content:
-          'Force is measured in Newtons (N). Formula: F = m × a. Energy is measured in Joules (J); it is never lost, it only changes form.',
+          'Force is measured in Newtons. The formula is F = m × a. Energy is measured in Joules.',
         quiz: [
           {
             question: 'What unit is force measured in?',
@@ -148,7 +150,7 @@ const courses = [
         title: 'The Cell',
         duration: '20 min',
         content:
-          'The cell is the basic unit of life. Every living thing is made of one or more cells. Key parts: the nucleus controls the cell, the cell membrane protects it, and the mitochondria release energy.',
+          'The cell is the basic unit of life. The nucleus controls cell activities, the membrane protects the cell, and mitochondria release energy.',
         quiz: [
           {
             question: 'What is the basic unit of life?',
@@ -156,7 +158,7 @@ const courses = [
             answer: 1,
           },
           {
-            question: 'Which part of the cell controls its activities?',
+            question: 'Which part controls cell activities?',
             options: ['Nucleus', 'Cell membrane', 'Mitochondria'],
             answer: 0,
           },
@@ -166,7 +168,7 @@ const courses = [
         title: 'Photosynthesis',
         duration: '25 min',
         content:
-          'Photosynthesis is how plants make food using sunlight. Plants take in carbon dioxide and water, and produce glucose and oxygen. It happens in the chloroplasts, which contain chlorophyll.',
+          'Photosynthesis allows plants to make food using sunlight, water, and carbon dioxide. It takes place in chloroplasts.',
         quiz: [
           {
             question: 'Which gas do plants release during photosynthesis?',
@@ -193,7 +195,7 @@ const courses = [
         title: 'Atoms and Elements',
         duration: '20 min',
         content:
-          'An atom is the smallest unit of an element. It has protons and neutrons in the nucleus, and electrons around it. An element contains only one type of atom, for example hydrogen (H) or oxygen (O).',
+          'Atoms contain protons, neutrons, and electrons. An element contains one type of atom, such as hydrogen or oxygen.',
         quiz: [
           {
             question: 'Which particle has a negative charge?',
@@ -211,7 +213,7 @@ const courses = [
         title: 'Chemical Reactions',
         duration: '25 min',
         content:
-          'In a chemical reaction, substances called reactants change into new substances called products. Example: hydrogen + oxygen → water. Mass is never lost: the total mass before and after is the same.',
+          'In a chemical reaction, reactants change into products. For example, hydrogen and oxygen can react to form water.',
         quiz: [
           {
             question: 'What are the starting substances in a reaction called?',
@@ -229,19 +231,29 @@ const courses = [
   },
 ]
 
-/* ---------- STATE (saved in localStorage) ---------- */
-let saved = {}
-try {
-  saved = JSON.parse(localStorage.getItem('learnhub')) || {}
-} catch {
-  saved = {}
+/* ---------- LOAD SAVED DATA ---------- */
+function loadSavedData() {
+  try {
+    return JSON.parse(localStorage.getItem('learnhub')) || {}
+  } catch {
+    return {}
+  }
 }
 
+const saved = loadSavedData()
+
 const state = {
-  completed: saved.completed || {}, // { js: [0, 1], math: [0] }
-  results: saved.results || [], // [{ course, lesson, score, total }]
-  tasks: saved.tasks || [], // [{ id, text, done }]
+  completed: saved.completed || {},
+  results: Array.isArray(saved.results) ? saved.results : [],
+  tasks: Array.isArray(saved.tasks)
+    ? saved.tasks.map((task) => ({
+        ...task,
+        id: String(task.id),
+        done: Boolean(task.done),
+      }))
+    : [],
   taskFilter: 'all',
+  editingTaskId: null,
   search: '',
   activeCourse: null,
   activeLesson: null,
@@ -249,27 +261,31 @@ const state = {
 }
 
 function save() {
-  localStorage.setItem(
-    'learnhub',
-    JSON.stringify({
-      completed: state.completed,
-      results: state.results,
-      tasks: state.tasks,
-    })
-  )
+  try {
+    localStorage.setItem(
+      'learnhub',
+      JSON.stringify({
+        completed: state.completed,
+        results: state.results,
+        tasks: state.tasks,
+      })
+    )
+  } catch (error) {
+    console.error('Unable to save LearnHub data:', error)
+  }
 }
 
 function getCourse(id) {
-  return courses.find((c) => c.id === id)
+  return courses.find((course) => course.id === id)
 }
 
 function courseProgress(course) {
-  const done = (state.completed[course.id] || []).length
-  return Math.round((done / course.lessons.length) * 100)
+  const completed = state.completed[course.id] || []
+  return Math.round((completed.length / course.lessons.length) * 100)
 }
 
-function escapeHtml(text) {
-  return text
+function escapeHtml(value) {
+  return String(value)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -280,7 +296,6 @@ function escapeHtml(text) {
 /* ---------- PAGE SHELL ---------- */
 document.querySelector('#app').innerHTML = `
   <div class="min-h-screen bg-slate-50 md:flex">
-
     <aside class="bg-slate-900 p-6 text-white md:sticky md:top-0 md:h-screen md:w-64 md:shrink-0">
       <h1 class="text-xl font-bold">📚 LearnHub</h1>
       <p class="mt-2 text-sm text-slate-400">Student Learning Platform</p>
@@ -302,7 +317,7 @@ document.querySelector('#app').innerHTML = `
         </div>
         <div class="flex items-center gap-3">
           <button id="theme-toggle" type="button"
-            class="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold hover:bg-slate-50">
+            class="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold">
             🌙 Dark
           </button>
           <div class="rounded-full bg-blue-100 px-4 py-2 font-semibold text-blue-700">🎓 Student</div>
@@ -312,10 +327,8 @@ document.querySelector('#app').innerHTML = `
       <section class="mt-8 rounded-2xl bg-blue-600 p-6 text-white md:p-8">
         <p class="text-sm font-semibold text-blue-100">YOUR FUTURE STARTS HERE</p>
         <h3 class="mt-3 text-2xl font-bold md:text-3xl">Learn something new every day!</h3>
-        <p class="mt-3 max-w-xl text-blue-100">
-          Read lessons, take tests and follow your progress.
-        </p>
-        <a href="#courses" class="mt-5 inline-block rounded-lg bg-white px-5 py-3 font-semibold text-blue-700 hover:bg-blue-50">
+        <p class="mt-3 max-w-xl text-blue-100">Read lessons, take tests and follow your progress.</p>
+        <a href="#courses" class="mt-5 inline-block rounded-lg bg-white px-5 py-3 font-semibold text-blue-700">
           Explore Courses →
         </a>
       </section>
@@ -324,22 +337,18 @@ document.querySelector('#app').innerHTML = `
         <article class="rounded-xl border border-slate-200 bg-white p-5">
           <p class="text-sm text-slate-500">Available Courses</p>
           <p id="course-count" class="mt-2 text-3xl font-bold">0</p>
-          <p class="mt-2 text-sm text-slate-500">Explore your subjects</p>
         </article>
         <article class="rounded-xl border border-slate-200 bg-white p-5">
           <p class="text-sm text-slate-500">Tests Completed</p>
           <p id="test-count" class="mt-2 text-3xl font-bold">0</p>
-          <p class="mt-2 text-sm text-slate-500">Keep practising</p>
         </article>
         <article class="rounded-xl border border-slate-200 bg-white p-5">
           <p class="text-sm text-slate-500">Lessons Completed</p>
           <p id="lesson-count" class="mt-2 text-3xl font-bold">0</p>
-          <p class="mt-2 text-sm text-slate-500">Stay consistent</p>
         </article>
         <article class="rounded-xl border border-slate-200 bg-white p-5">
           <p class="text-sm text-slate-500">Average Test Score</p>
           <p id="average-score" class="mt-2 text-3xl font-bold">—</p>
-          <p class="mt-2 text-sm text-slate-500">Your learning progress</p>
         </article>
       </section>
 
@@ -351,8 +360,9 @@ document.querySelector('#app').innerHTML = `
           </div>
           <span id="subject-label" class="text-sm font-medium text-blue-600"></span>
         </div>
-        <input id="course-search" type="search" placeholder="Search courses (e.g. physics, science)..."
-          class="mt-5 w-full rounded-lg border border-slate-300 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <input id="course-search" type="search"
+          placeholder="Search courses (e.g. physics, science)..."
+          class="mt-5 w-full rounded-lg border border-slate-300 bg-white px-4 py-3" />
         <div id="course-list" class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3"></div>
       </section>
 
@@ -360,9 +370,7 @@ document.querySelector('#app').innerHTML = `
 
       <section id="tests" class="mt-8 rounded-xl border border-slate-200 bg-white p-6">
         <h3 class="text-lg font-bold">📝 Online Tests</h3>
-        <p class="mt-2 text-slate-600">
-          Open any lesson to read it, then take its quiz. Pass the quiz to complete the lesson.
-        </p>
+        <p class="mt-2 text-slate-600">Open a lesson, read the content, and complete its quiz.</p>
       </section>
 
       <section id="results" class="mt-5 rounded-xl border border-slate-200 bg-white p-6">
@@ -372,24 +380,24 @@ document.querySelector('#app').innerHTML = `
 
       <section id="tasks" class="mt-5 rounded-xl border border-slate-200 bg-white p-6">
         <h3 class="text-lg font-bold">✅ My Tasks</h3>
-        <p class="mt-2 text-slate-600">Plan your study tasks and tick them off.</p>
+        <p class="mt-2 text-slate-600">Organize your study tasks and track your progress.</p>
 
         <form id="task-form" class="mt-4 flex gap-2">
           <input id="task-input" type="text" maxlength="100"
+            aria-label="New task"
             placeholder="e.g. Revise Physics formulas"
-            class="min-w-0 flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <button type="submit"
-            class="rounded-lg bg-blue-600 px-5 py-2 font-semibold text-white hover:bg-blue-700">
+            class="min-w-0 flex-1 rounded-lg border border-slate-300 px-4 py-2" />
+          <button type="submit" class="rounded-lg bg-blue-600 px-5 py-2 font-semibold text-white">
             Add
           </button>
         </form>
-        <p id="task-error" class="mt-2 hidden text-sm text-red-600"></p>
+        <p id="task-error" role="alert" class="mt-2 hidden text-sm text-red-600"></p>
 
         <div id="task-filters" class="mt-4 flex flex-wrap gap-2"></div>
         <ul id="task-list" class="mt-4 space-y-2"></ul>
 
-        <div class="mt-4 flex items-center justify-between text-sm text-slate-500">
-          <span id="task-counter"></span>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
+          <span id="task-counter" aria-live="polite"></span>
           <button type="button" data-action="clear-completed" class="text-red-600 hover:underline">
             Clear completed
           </button>
@@ -403,47 +411,65 @@ document.querySelector('#app').innerHTML = `
   </div>
 `
 
-/* ---------- RENDER FUNCTIONS ---------- */
+/* ---------- DASHBOARD RENDERING ---------- */
 function renderStats() {
-  const totalDone = Object.values(state.completed).reduce((sum, list) => sum + list.length, 0)
+  const totalCompleted = Object.values(state.completed).reduce(
+    (sum, list) => sum + list.length,
+    0
+  )
+
   const average = state.results.length
     ? Math.round(
-        (state.results.reduce((sum, r) => sum + r.score / r.total, 0) / state.results.length) * 100
+        (state.results.reduce(
+          (sum, result) => sum + result.score / result.total,
+          0
+        ) /
+          state.results.length) *
+          100
       )
     : null
 
   document.querySelector('#course-count').textContent = courses.length
   document.querySelector('#subject-label').textContent = `${courses.length} subjects`
   document.querySelector('#test-count').textContent = state.results.length
-  document.querySelector('#lesson-count').textContent = totalDone
-  document.querySelector('#average-score').textContent = average === null ? '—' : `${average}%`
+  document.querySelector('#lesson-count').textContent = totalCompleted
+  document.querySelector('#average-score').textContent =
+    average === null ? '—' : `${average}%`
 }
 
 function renderCourses() {
   const query = state.search.trim().toLowerCase()
+
   const visible = courses.filter(
-    (c) =>
-      c.title.toLowerCase().includes(query) ||
-      c.category.toLowerCase().includes(query)
+    (course) =>
+      course.title.toLowerCase().includes(query) ||
+      course.category.toLowerCase().includes(query)
   )
+
   const list = document.querySelector('#course-list')
 
-  if (visible.length === 0) {
-    list.innerHTML =
-      '<p class="col-span-full rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">No courses found.</p>'
+  if (!visible.length) {
+    list.innerHTML = `
+      <p class="col-span-full rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">
+        No courses found. Try another search.
+      </p>
+    `
     return
   }
 
   list.innerHTML = visible
     .map((course) => {
       const progress = courseProgress(course)
+
       return `
-        <article class="rounded-xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-lg">
+        <article class="rounded-xl border border-slate-200 bg-white p-5 transition hover:shadow-lg">
           <div class="flex items-center gap-4">
-            <div class="${course.color} flex h-14 w-14 items-center justify-center rounded-xl text-2xl">${course.icon}</div>
+            <div class="${course.color} flex h-14 w-14 items-center justify-center rounded-xl text-2xl">
+              ${course.icon}
+            </div>
             <div>
-              <h4 class="font-bold text-slate-900">${course.title}</h4>
-              <p class="mt-1 text-sm text-slate-500">${course.category}</p>
+              <h4 class="font-bold text-slate-900">${escapeHtml(course.title)}</h4>
+              <p class="mt-1 text-sm text-slate-500">${escapeHtml(course.category)}</p>
             </div>
           </div>
 
@@ -451,8 +477,9 @@ function renderCourses() {
             <span class="text-slate-500">Course progress</span>
             <span class="font-semibold">${progress}%</span>
           </div>
+
           <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-            <div class="h-full rounded-full bg-blue-600 transition-all" style="width: ${progress}%"></div>
+            <div class="h-full rounded-full bg-blue-600" style="width:${progress}%"></div>
           </div>
 
           <button type="button" data-action="start-course" data-course="${course.id}"
@@ -474,35 +501,37 @@ function renderLearn() {
     return
   }
 
-  /* Lesson list */
   if (state.activeLesson === null) {
     const done = state.completed[course.id] || []
+
     panel.innerHTML = `
       <div class="rounded-2xl border border-slate-200 bg-white p-6">
         <div class="flex items-start justify-between gap-4">
           <div>
             <p class="text-sm font-semibold text-blue-600">SELECTED COURSE</p>
-            <h3 class="mt-1 text-xl font-bold">${course.icon} ${course.title}</h3>
+            <h3 class="mt-1 text-xl font-bold">${course.icon} ${escapeHtml(course.title)}</h3>
           </div>
-          <button type="button" data-action="close-course" class="text-slate-500 hover:text-blue-600">Close ×</button>
+          <button type="button" data-action="close-course" class="text-slate-500">Close ×</button>
         </div>
 
         <div class="mt-5 space-y-3">
           ${course.lessons
             .map(
-              (lesson, i) => `
-            <div class="flex flex-col justify-between gap-3 rounded-xl border border-slate-200 p-4 md:flex-row md:items-center">
-              <div>
-                <p class="font-semibold">${i + 1}. ${lesson.title}</p>
-                <p class="text-sm text-slate-500">${lesson.duration}
-                  ${done.includes(i) ? '<span class="ml-2 text-green-600">✓ Completed</span>' : ''}
-                </p>
-              </div>
-              <button type="button" data-action="open-lesson" data-lesson="${i}"
-                class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700">
-                ${done.includes(i) ? 'Review' : 'Start Lesson'}
-              </button>
-            </div>`
+              (lesson, index) => `
+                <div class="flex flex-col justify-between gap-3 rounded-xl border border-slate-200 p-4 md:flex-row md:items-center">
+                  <div>
+                    <p class="font-semibold">${index + 1}. ${escapeHtml(lesson.title)}</p>
+                    <p class="text-sm text-slate-500">
+                      ${escapeHtml(lesson.duration)}
+                      ${done.includes(index) ? '<span class="ml-2 text-green-600">✓ Completed</span>' : ''}
+                    </p>
+                  </div>
+                  <button type="button" data-action="open-lesson" data-lesson="${index}"
+                    class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white">
+                    ${done.includes(index) ? 'Review' : 'Start Lesson'}
+                  </button>
+                </div>
+              `
             )
             .join('')}
         </div>
@@ -511,53 +540,73 @@ function renderLearn() {
     return
   }
 
-  /* Single lesson + quiz */
   const lesson = course.lessons[state.activeLesson]
-  const fb = state.feedback
+  const feedback = state.feedback
 
   panel.innerHTML = `
     <div class="rounded-2xl border border-slate-200 bg-white p-6">
-      <p class="text-sm font-semibold text-blue-600">${course.title}</p>
-      <h3 class="mt-1 text-2xl font-bold">${lesson.title}</h3>
+      <p class="text-sm font-semibold text-blue-600">${escapeHtml(course.title)}</p>
+      <h3 class="mt-1 text-2xl font-bold">${escapeHtml(lesson.title)}</h3>
 
-      <div class="mt-4 rounded-xl bg-blue-50 p-5 text-slate-700">${lesson.content}</div>
+      <div class="mt-4 rounded-xl bg-blue-50 p-5 text-slate-700">
+        ${escapeHtml(lesson.content)}
+      </div>
 
       <h4 class="mt-6 text-lg font-bold">📝 Quiz</h4>
 
       ${lesson.quiz
         .map(
-          (q, qi) => `
-        <div class="mt-4">
-          <p class="font-semibold">${qi + 1}. ${q.question}</p>
-          <div class="mt-2 space-y-2">
-            ${q.options
-              .map((opt, oi) => {
-                let style = 'border-slate-200'
-                if (fb) {
-                  if (oi === q.answer) style = 'border-green-500 bg-green-50'
-                  else if (fb.picked[qi] === oi) style = 'border-red-500 bg-red-50'
-                }
-                return `
-                <label class="flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 ${style}">
-                  <input type="radio" name="q${qi}" value="${oi}" ${fb ? 'disabled' : ''}
-                    ${fb && fb.picked[qi] === oi ? 'checked' : ''} />
-                  ${opt}
-                </label>`
-              })
-              .join('')}
-          </div>
-        </div>`
+          (question, questionIndex) => `
+            <div class="mt-4">
+              <p class="font-semibold">${questionIndex + 1}. ${escapeHtml(question.question)}</p>
+              <div class="mt-2 space-y-2">
+                ${question.options
+                  .map((option, optionIndex) => {
+                    let style = 'border-slate-200'
+
+                    if (feedback) {
+                      if (optionIndex === question.answer) {
+                        style = 'border-green-500 bg-green-50'
+                      } else if (feedback.picked[questionIndex] === optionIndex) {
+                        style = 'border-red-500 bg-red-50'
+                      }
+                    }
+
+                    return `
+                      <label class="flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 ${style}">
+                        <input type="radio" name="q${questionIndex}" value="${optionIndex}"
+                          ${feedback ? 'disabled' : ''}
+                          ${feedback && feedback.picked[questionIndex] === optionIndex ? 'checked' : ''} />
+                        ${escapeHtml(option)}
+                      </label>
+                    `
+                  })
+                  .join('')}
+              </div>
+            </div>
+          `
         )
         .join('')}
 
       <div class="mt-6 flex flex-wrap items-center gap-3">
         ${
-          fb
-            ? `<p class="font-bold">Score: ${fb.score}/${fb.total} ${fb.score === fb.total ? '🎉 Lesson completed!' : '😅 Try again to complete the lesson'}</p>
-               ${fb.score !== fb.total ? '<button type="button" data-action="retry" class="rounded-lg border border-slate-300 px-4 py-2 font-semibold hover:bg-slate-50">Try again</button>' : ''}`
-            : '<button type="button" data-action="submit-quiz" class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Submit Quiz</button>'
+          feedback
+            ? `
+              <p class="font-bold">
+                Score: ${feedback.score}/${feedback.total}
+                ${feedback.score === feedback.total ? '🎉 Lesson completed!' : 'Try again to complete the lesson.'}
+              </p>
+              ${
+                feedback.score !== feedback.total
+                  ? '<button type="button" data-action="retry" class="rounded-lg border border-slate-300 px-4 py-2">Try again</button>'
+                  : ''
+              }
+            `
+            : '<button type="button" data-action="submit-quiz" class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white">Submit Quiz</button>'
         }
-        <button type="button" data-action="back-lessons" class="rounded-lg border border-slate-300 px-4 py-2 font-semibold hover:bg-slate-50">Back to Lessons</button>
+        <button type="button" data-action="back-lessons" class="rounded-lg border border-slate-300 px-4 py-2">
+          Back to Lessons
+        </button>
       </div>
     </div>
   `
@@ -566,7 +615,7 @@ function renderLearn() {
 function renderResults() {
   const box = document.querySelector('#results-list')
 
-  if (state.results.length === 0) {
+  if (!state.results.length) {
     box.innerHTML = '<p class="text-slate-600">Your test scores will appear here after your first quiz.</p>'
     return
   }
@@ -576,57 +625,126 @@ function renderResults() {
       ${[...state.results]
         .reverse()
         .map(
-          (r) => `
-        <li class="flex items-center justify-between py-3">
-          <span>${r.course} · <span class="text-slate-500">${r.lesson}</span></span>
-          <span class="font-semibold ${r.score === r.total ? 'text-green-600' : 'text-orange-600'}">${r.score}/${r.total}</span>
-        </li>`
+          (result) => `
+            <li class="flex items-center justify-between gap-3 py-3">
+              <span>${escapeHtml(result.course)} · <span class="text-slate-500">${escapeHtml(result.lesson)}</span></span>
+              <span class="font-semibold ${result.score === result.total ? 'text-green-600' : 'text-orange-600'}">
+                ${result.score}/${result.total}
+              </span>
+            </li>
+          `
         )
         .join('')}
     </ul>
   `
 }
 
+/* ---------- TASK LIST: EDIT, DELETE, FILTER, COUNTER ---------- */
 function renderTasks() {
-  const filters = ['all', 'active', 'completed']
+  const filterOptions = ['all', 'active', 'completed']
 
-  document.querySelector('#task-filters').innerHTML = filters
+  document.querySelector('#task-filters').innerHTML = filterOptions
     .map(
-      (f) => `
-      <button type="button" data-action="filter" data-filter="${f}"
-        class="rounded-full px-4 py-1 text-sm font-medium ${
-          state.taskFilter === f
-            ? 'bg-blue-600 text-white'
-            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-        }">
-        ${f[0].toUpperCase() + f.slice(1)}
-      </button>`
+      (filter) => `
+        <button type="button" data-action="filter" data-filter="${filter}"
+          aria-pressed="${state.taskFilter === filter}"
+          class="rounded-full px-4 py-1 text-sm font-medium ${
+            state.taskFilter === filter
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+          }">
+          ${filter[0].toUpperCase() + filter.slice(1)}
+        </button>
+      `
     )
     .join('')
 
-  const visible = state.tasks.filter((t) =>
-    state.taskFilter === 'all' ? true : state.taskFilter === 'active' ? !t.done : t.done
-  )
+  const visibleTasks = state.tasks.filter((task) => {
+    if (state.taskFilter === 'active') return !task.done
+    if (state.taskFilter === 'completed') return task.done
+    return true
+  })
 
-  document.querySelector('#task-list').innerHTML = visible.length
-    ? visible
-        .map(
-          (t) => `
-      <li class="flex items-center justify-between gap-3 rounded-lg border border-slate-200 px-4 py-3">
-        <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
-          <input type="checkbox" data-action="toggle-task" data-id="${t.id}" ${t.done ? 'checked' : ''} />
-          <span class="break-words ${t.done ? 'text-slate-400 line-through' : ''}">${escapeHtml(t.text)}</span>
-        </label>
-        <button type="button" data-action="delete-task" data-id="${t.id}"
-          class="text-slate-400 hover:text-red-600" aria-label="Delete task">🗑️</button>
-      </li>`
-        )
-        .join('')
-    : '<li class="rounded-lg border border-dashed border-slate-300 p-4 text-center text-slate-500">No tasks here yet.</li>'
+  const list = document.querySelector('#task-list')
 
-  const remaining = state.tasks.filter((t) => !t.done).length
+  if (!visibleTasks.length) {
+    const message =
+      state.tasks.length === 0
+        ? 'No tasks yet. Add your first task above!'
+        : state.taskFilter === 'active'
+          ? 'No active tasks. Great job!'
+          : state.taskFilter === 'completed'
+            ? 'No completed tasks yet.'
+            : 'No tasks found.'
+
+    list.innerHTML = `
+      <li class="rounded-lg border border-dashed border-slate-300 p-5 text-center text-slate-500">
+        ${message}
+      </li>
+    `
+  } else {
+    list.innerHTML = visibleTasks
+      .map((task) => {
+        const isEditing = state.editingTaskId === task.id
+
+        return `
+          <li class="rounded-lg border border-slate-200 px-4 py-3">
+            ${
+              isEditing
+                ? `
+                  <form data-action="save-task" data-id="${task.id}" class="flex flex-wrap gap-2">
+                    <input type="text" data-edit-input value="${escapeHtml(task.text)}"
+                      maxlength="100" required aria-label="Edit task"
+                      class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2" />
+                    <button type="submit" class="rounded-lg bg-blue-600 px-3 py-2 text-white">
+                      Save
+                    </button>
+                    <button type="button" data-action="cancel-edit"
+                      class="rounded-lg border border-slate-300 px-3 py-2">
+                      Cancel
+                    </button>
+                    <p data-edit-error class="hidden w-full text-sm text-red-600"></p>
+                  </form>
+                `
+                : `
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
+                      <input type="checkbox" data-action="toggle-task" data-id="${task.id}"
+                        ${task.done ? 'checked' : ''} aria-label="Mark task complete" />
+                      <span class="break-words ${
+                        task.done ? 'text-slate-400 line-through' : 'text-slate-800'
+                      }">${escapeHtml(task.text)}</span>
+                    </label>
+                    <div class="flex items-center gap-3">
+                      <button type="button" data-action="edit-task" data-id="${task.id}"
+                        class="text-sm font-medium text-blue-600 hover:underline"
+                        ${task.done ? 'disabled title="Uncheck the task before editing"' : ''}>
+                        Edit
+                      </button>
+                      <button type="button" data-action="delete-task" data-id="${task.id}"
+                        class="text-sm font-medium text-red-600 hover:underline">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                `
+            }
+          </li>
+        `
+      })
+      .join('')
+  }
+
+  const remaining = state.tasks.filter((task) => !task.done).length
+  const completed = state.tasks.filter((task) => task.done).length
+
   document.querySelector('#task-counter').textContent =
-    `${remaining} task${remaining === 1 ? '' : 's'} remaining`
+    `${remaining} ${remaining === 1 ? 'task' : 'tasks'} remaining · ${completed} completed`
+
+  const clearButton = document.querySelector('[data-action="clear-completed"]')
+  clearButton.disabled = completed === 0
+  clearButton.classList.toggle('opacity-50', completed === 0)
+  clearButton.classList.toggle('cursor-not-allowed', completed === 0)
 }
 
 function renderAll() {
@@ -637,14 +755,17 @@ function renderAll() {
   renderTasks()
 }
 
-/* ---------- ACTIONS ---------- */
+/* ---------- QUIZ ACTION ---------- */
 function submitQuiz() {
   const course = getCourse(state.activeCourse)
+
+  if (!course || state.activeLesson === null) return
+
   const lesson = course.lessons[state.activeLesson]
 
-  const picked = lesson.quiz.map((q, qi) => {
-    const checked = document.querySelector(`input[name="q${qi}"]:checked`)
-    return checked ? Number(checked.value) : null
+  const picked = lesson.quiz.map((question, index) => {
+    const selected = document.querySelector(`input[name="q${index}"]:checked`)
+    return selected ? Number(selected.value) : null
   })
 
   if (picked.includes(null)) {
@@ -652,27 +773,42 @@ function submitQuiz() {
     return
   }
 
-  const score = lesson.quiz.filter((q, qi) => picked[qi] === q.answer).length
+  const score = lesson.quiz.filter(
+    (question, index) => picked[index] === question.answer
+  ).length
+
   const total = lesson.quiz.length
 
-  state.results.push({ course: course.title, lesson: lesson.title, score, total })
+  state.results.push({
+    course: course.title,
+    lesson: lesson.title,
+    score,
+    total,
+  })
 
   if (score === total) {
-    const done = state.completed[course.id] || []
-    if (!done.includes(state.activeLesson)) done.push(state.activeLesson)
-    state.completed[course.id] = done
+    const completed = state.completed[course.id] || []
+
+    if (!completed.includes(state.activeLesson)) {
+      completed.push(state.activeLesson)
+    }
+
+    state.completed[course.id] = completed
   }
 
   state.feedback = { score, total, picked }
+
   save()
   renderAll()
 }
 
+/* ---------- CLICK ACTIONS ---------- */
 document.addEventListener('click', (event) => {
   const button = event.target.closest('[data-action]')
   if (!button) return
 
   const action = button.dataset.action
+  const id = button.dataset.id
 
   if (action === 'start-course') {
     state.activeCourse = button.dataset.course
@@ -685,6 +821,7 @@ document.addEventListener('click', (event) => {
   if (action === 'close-course') {
     state.activeCourse = null
     state.activeLesson = null
+    state.feedback = null
     renderLearn()
   }
 
@@ -705,35 +842,80 @@ document.addEventListener('click', (event) => {
     renderLearn()
   }
 
+  if (action === 'submit-quiz') {
+    submitQuiz()
+  }
+
   if (action === 'toggle-task') {
-    const task = state.tasks.find((t) => t.id === button.dataset.id)
+    const task = state.tasks.find((item) => item.id === id)
+
     if (task) {
       task.done = !task.done
+      state.editingTaskId = null
       save()
       renderTasks()
     }
   }
 
   if (action === 'delete-task') {
-    state.tasks = state.tasks.filter((t) => t.id !== button.dataset.id)
-    save()
+    const task = state.tasks.find((item) => item.id === id)
+    if (!task) return
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${task.text}"?`
+    )
+
+    if (confirmed) {
+      state.tasks = state.tasks.filter((item) => item.id !== id)
+
+      if (state.editingTaskId === id) {
+        state.editingTaskId = null
+      }
+
+      save()
+      renderTasks()
+    }
+  }
+
+  if (action === 'edit-task') {
+    state.editingTaskId = id
+    renderTasks()
+
+    const editInput = document.querySelector('[data-edit-input]')
+    editInput?.focus()
+    editInput?.select()
+  }
+
+  if (action === 'cancel-edit') {
+    state.editingTaskId = null
     renderTasks()
   }
 
   if (action === 'filter') {
     state.taskFilter = button.dataset.filter
+    state.editingTaskId = null
     renderTasks()
   }
 
   if (action === 'clear-completed') {
-    state.tasks = state.tasks.filter((t) => !t.done)
-    save()
-    renderTasks()
-  }
+    const completedCount = state.tasks.filter((task) => task.done).length
 
-  if (action === 'submit-quiz') submitQuiz()
+    if (!completedCount) return
+
+    const confirmed = window.confirm(
+      `Clear all ${completedCount} completed task(s)?`
+    )
+
+    if (confirmed) {
+      state.tasks = state.tasks.filter((task) => !task.done)
+      state.editingTaskId = null
+      save()
+      renderTasks()
+    }
+  }
 })
 
+/* ---------- ADD TASK WITH VALIDATION ---------- */
 document.querySelector('#task-form').addEventListener('submit', (event) => {
   event.preventDefault()
 
@@ -742,18 +924,87 @@ document.querySelector('#task-form').addEventListener('submit', (event) => {
   const text = input.value.trim()
 
   if (!text) {
-    error.textContent = 'Please enter a task.'
+    error.textContent = 'Please enter a task before adding it.'
     error.classList.remove('hidden')
+    input.focus()
+    return
+  }
+
+  if (state.tasks.some((task) => task.text.toLowerCase() === text.toLowerCase())) {
+    error.textContent = 'This task already exists. Please enter a different task.'
+    error.classList.remove('hidden')
+    input.focus()
     return
   }
 
   error.classList.add('hidden')
-  state.tasks.push({ id: Date.now().toString(), text, done: false })
+
+  state.tasks.push({
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    text,
+    done: false,
+  })
+
+  state.taskFilter = 'all'
   input.value = ''
+
   save()
   renderTasks()
+  input.focus()
 })
 
+/* ---------- SAVE EDITED TASK ---------- */
+document.addEventListener('submit', (event) => {
+  const form = event.target.closest('form[data-action="save-task"]')
+  if (!form) return
+
+  event.preventDefault()
+
+  const id = form.dataset.id
+  const input = form.querySelector('[data-edit-input]')
+  const error = form.querySelector('[data-edit-error]')
+  const newText = input.value.trim()
+
+  if (!newText) {
+    error.textContent = 'Task cannot be empty.'
+    error.classList.remove('hidden')
+    input.focus()
+    return
+  }
+
+  const duplicate = state.tasks.some(
+    (task) =>
+      task.id !== id && task.text.toLowerCase() === newText.toLowerCase()
+  )
+
+  if (duplicate) {
+    error.textContent = 'Another task already has this name.'
+    error.classList.remove('hidden')
+    input.focus()
+    return
+  }
+
+  const task = state.tasks.find((item) => item.id === id)
+
+  if (task) {
+    task.text = newText
+    state.editingTaskId = null
+    save()
+    renderTasks()
+  }
+})
+
+/* ---------- KEYBOARD SUPPORT FOR EDITING ---------- */
+document.addEventListener('keydown', (event) => {
+  if (!event.target.matches('[data-edit-input]')) return
+
+  if (event.key === 'Escape') {
+    state.editingTaskId = null
+    renderTasks()
+  }
+})
+
+/* ---------- COURSE SEARCH ---------- */
 document.querySelector('#course-search').addEventListener('input', (event) => {
   state.search = event.target.value
   renderCourses()
@@ -761,12 +1012,16 @@ document.querySelector('#course-search').addEventListener('input', (event) => {
 
 /* ---------- DARK MODE ---------- */
 const themeButton = document.querySelector('#theme-toggle')
-let theme = 'light'
-try {
-  theme = localStorage.getItem('learnhub-theme') || 'light'
-} catch {
-  theme = 'light'
+
+function loadTheme() {
+  try {
+    return localStorage.getItem('learnhub-theme') || 'light'
+  } catch {
+    return 'light'
+  }
 }
+
+let theme = loadTheme()
 
 function applyTheme(value) {
   document.documentElement.classList.toggle('dark', value === 'dark')
@@ -777,8 +1032,14 @@ applyTheme(theme)
 
 themeButton.addEventListener('click', () => {
   theme = theme === 'dark' ? 'light' : 'dark'
-  localStorage.setItem('learnhub-theme', theme)
   applyTheme(theme)
+
+  try {
+    localStorage.setItem('learnhub-theme', theme)
+  } catch (error) {
+    console.error('Unable to save theme preference:', error)
+  }
 })
 
+/* ---------- INITIAL RENDER ---------- */
 renderAll()
