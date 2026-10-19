@@ -1,81 +1,144 @@
 # 📚 LearnHub – Student Learning Platform
 
-LearnHub is a simple online learning platform where students can study lessons, take quizzes, track their progress and organise their study tasks.
+LearnHub is a simple online learning platform where students can study lessons, take quizzes, track their progress, and organize their study tasks.
 
-**🔗 Live demo:** https://YOUR-LINK.vercel.app
+## 🔗 Live Demo
 
-![LearnHub dashboard](screenshots/dashboard.png)
+[Open LearnHub](https://week4-todo-app-pi.vercel.app/)
 
-## Features
+**Note:** Replace this URL with your actual LearnHub deployment link when it is available.
 
-- **5 courses:** JavaScript Fundamentals, Mathematics, Physics, Biology and Chemistry
-- **Course search:** filter courses by title or category (for example "bio" or "science")
-- **Lessons with quizzes:** read a lesson, then take its quiz
-- **Automatic progress:** a lesson is completed only when all quiz answers are correct
-- **My Results:** keeps every quiz attempt with its score
-- **Dashboard stats:** courses, tests taken, lessons completed and average score
-- **My Tasks:** add, complete, delete, filter (All / Active / Completed) and clear completed study tasks
-- **Dark mode:** switch between light and dark themes; your choice is remembered
-- **Saved data:** progress, results, tasks and theme are stored in the browser with localStorage
-- **Responsive design:** works on phones, tablets and desktops
+## 📸 Dashboard Preview
 
-## Screenshots
+![LearnHub Dashboard](screenshots/dashboard.png)
+
+## ✨ Features
+
+- **Five Courses:** JavaScript Fundamentals, Mathematics, Physics, Biology, and Chemistry.
+- **Course Search:** Filter courses by title or category.
+- **Lessons and Quizzes:** Study lessons and test your knowledge with quizzes.
+- **Automatic Progress Tracking:** Track lesson completion after answering quiz questions correctly.
+- **My Results:** View quiz attempts and scores.
+- **Dashboard Statistics:** Track courses, tests taken, completed lessons, and average scores.
+- **My Tasks:** Add, complete, delete, filter, and clear completed tasks.
+- **Dark Mode:** Switch between light and dark themes.
+- **Local Storage:** Save progress, results, tasks, and theme preferences in the browser.
+- **Responsive Design:** Access the platform on phones, tablets, and desktops.
+
+## 📸 Screenshots
+
+### Dashboard and Quiz
 
 | Dashboard | Quiz |
-| --- | --- |
+|---|---|
 | ![Dashboard](screenshots/dashboard.png) | ![Quiz](screenshots/quiz.png) |
 
-| My Tasks | Dark mode |
-| --- | --- |
-| ![My Tasks](screenshots/tasks.png) | ![Dark mode](screenshots/dark-mode.png) |
+### My Tasks and Dark Mode
 
-## Built with
+| My Tasks | Dark Mode |
+|---|---|
+| ![My Tasks](screenshots/tasks.png) | ![Dark Mode](screenshots/dark-mode.png) |
 
-- HTML
+## 🛠️ Technologies Used
+
+- HTML5
 - Tailwind CSS v4
 - Vanilla JavaScript
 - Vite
-- Deployed on Vercel
+- Vercel
 
-## Run it locally
+## 💻 How to Run Locally
+
+### Prerequisites
+
+- Node.js and npm
+- Git
+- Visual Studio Code or another code editor
+
+### Installation
+
+**1. Clone the repository**
+
+Replace `YOUR-USERNAME` with your GitHub username.
 
 ```bash
 git clone https://github.com/YOUR-USERNAME/student-learning-platform.git
+```
+
+**2. Navigate to the project folder**
+
+```bash
 cd student-learning-platform
+```
+
+**3. Install dependencies**
+
+```bash
 npm install
+```
+
+**4. Start the development server**
+
+```bash
 npm run dev
 ```
 
-Then open http://localhost:5173 in your browser.
+Open the local URL displayed in your terminal.
 
-## Project structure
+## 📁 Project Structure
 
-```
+```text
 student-learning-platform/
-├── screenshots/     # images used in this README
+├── screenshots/
+│   ├── dashboard.png
+│   ├── quiz.png
+│   ├── tasks.png
+│   └── dark-mode.png
 ├── src/
-│   ├── main.js      # courses data, rendering, quiz, tasks, search and theme logic
-│   └── style.css    # Tailwind import and dark mode styles
+│   ├── main.js
+│   └── style.css
 ├── index.html
 ├── package.json
-└── vite.config.js
+├── vite.config.js
+└── README.md
 ```
 
-## How to add a new course
+*Note: Adjust the structure above to match the actual files in your project.*
 
-Open `src/main.js` and add a new object to the `courses` array with an `id`, `title`, `category`, `color`, `icon` and a list of `lessons`. Each lesson has a `title`, `duration`, `content` and a `quiz` (questions, options and the index of the correct answer). Progress, stats and search update automatically.
+## ➕ How to Add a New Course
 
-## Known limitations
+1. Open `src/main.js`.
+2. Find the `courses` array.
+3. Add a new course object following the structure of the existing courses.
+4. Include the course ID, title, category, color, icon, and lessons.
+5. Add lesson content and quiz questions with answer options and the correct answer index.
 
-- Data is stored in the browser (localStorage), so it is not shared between devices.
-- There are no user accounts or backend yet.
+Make sure the new course follows the structure used by the existing courses.
 
-## Future improvements
+## ⚠️ Known Limitations
 
-- More lessons in every course
-- User accounts and a database
-- Timed quizzes and certificates
+- Data is stored in the browser using Local Storage and is not automatically shared between devices.
+- The platform does not currently have user accounts or a backend database.
 
-## Author
+## 🚀 Future Improvements
 
-Iradukunda Flora
+- Add more lessons to each course.
+- Introduce user accounts and database storage.
+- Add timed quizzes and certificates.
+
+## 🎥 Demo Video
+
+Watch my Week 4 Todo App demonstration:
+
+[Watch My Week 4 Todo App Demo](https://drive.google.com/file/d/125NuaBoR5EEVYcT_7RNGJmD0c-izGZ5E/view?usp=drive_link)
+
+## 👩‍💻 Author
+
+**Iradukunda Flora**
+
+Frontend Web Development Learner  
+Igire Rwanda Organization
+
+## 📄 License
+
+This project was created for educational purposes as part of my frontend web development learning journey.
