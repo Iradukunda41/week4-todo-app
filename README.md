@@ -1,12 +1,10 @@
 # 📚 LearnHub – Student Learning Platform
 
-LearnHub is a simple online learning platform where students can study lessons, take quizzes, track their progress, and organize their study tasks.
+LearnHub is a simple, responsive online learning platform where students can study lessons, take quizzes, track their learning progress, and organize their study tasks.
 
 ## 🔗 Live Demo
 
 [Open LearnHub](https://week4-todo-app-pi.vercel.app/)
-
-**Note:** Replace this URL with your actual LearnHub deployment link when it is available.
 
 ## 📸 Dashboard Preview
 
@@ -15,15 +13,18 @@ LearnHub is a simple online learning platform where students can study lessons, 
 ## ✨ Features
 
 - **Five Courses:** JavaScript Fundamentals, Mathematics, Physics, Biology, and Chemistry.
-- **Course Search:** Filter courses by title or category.
-- **Lessons and Quizzes:** Study lessons and test your knowledge with quizzes.
-- **Automatic Progress Tracking:** Track lesson completion after answering quiz questions correctly.
+- **Course Search:** Search courses by title or category.
+- **Lessons and Quizzes:** Read lesson content and test your knowledge.
+- **Progress Tracking:** Track completed lessons after answering quiz questions correctly.
 - **My Results:** View quiz attempts and scores.
-- **Dashboard Statistics:** Track courses, tests taken, completed lessons, and average scores.
-- **My Tasks:** Add, complete, delete, filter, and clear completed tasks.
+- **Dashboard Statistics:** View available courses, tests completed, lessons completed, and average test scores.
+- **Task Management:** Add, edit, complete, and delete tasks.
+- **Task Filters:** Filter tasks by All, Active, and Completed.
+- **Clear Completed Tasks:** Remove completed tasks after confirmation.
+- **Input Validation:** Prevent empty and duplicate tasks.
+- **Local Storage:** Save tasks, learning progress, quiz results, and theme preferences in the browser.
 - **Dark Mode:** Switch between light and dark themes.
-- **Local Storage:** Save progress, results, tasks, and theme preferences in the browser.
-- **Responsive Design:** Access the platform on phones, tablets, and desktops.
+- **Responsive Design:** Use the platform on phones, tablets, and desktops.
 
 ## 📸 Screenshots
 
@@ -45,6 +46,7 @@ LearnHub is a simple online learning platform where students can study lessons, 
 - Tailwind CSS v4
 - Vanilla JavaScript
 - Vite
+- Local Storage
 - Vercel
 
 ## 💻 How to Run Locally
@@ -59,16 +61,14 @@ LearnHub is a simple online learning platform where students can study lessons, 
 
 **1. Clone the repository**
 
-Replace `YOUR-USERNAME` with your GitHub username.
-
 ```bash
-git clone https://github.com/YOUR-USERNAME/student-learning-platform.git
+git clone https://github.com/Iradukunda41/week4-todo-app.git
 ```
 
 **2. Navigate to the project folder**
 
 ```bash
-cd student-learning-platform
+cd week4-todo-app
 ```
 
 **3. Install dependencies**
@@ -88,7 +88,7 @@ Open the local URL displayed in your terminal.
 ## 📁 Project Structure
 
 ```text
-student-learning-platform/
+week4-todo-app/
 ├── screenshots/
 │   ├── dashboard.png
 │   ├── quiz.png
@@ -103,7 +103,7 @@ student-learning-platform/
 └── README.md
 ```
 
-*Note: Adjust the structure above to match the actual files in your project.*
+*Note: The structure above is an example. Make sure it matches your actual repository and that the screenshot files exist.*
 
 ## ➕ How to Add a New Course
 
@@ -111,9 +111,7 @@ student-learning-platform/
 2. Find the `courses` array.
 3. Add a new course object following the structure of the existing courses.
 4. Include the course ID, title, category, color, icon, and lessons.
-5. Add lesson content and quiz questions with answer options and the correct answer index.
-
-Make sure the new course follows the structure used by the existing courses.
+5. Add lesson content, quiz questions, answer options, and the correct answer index.
 
 ## ⚠️ Known Limitations
 
@@ -128,9 +126,9 @@ Make sure the new course follows the structure used by the existing courses.
 
 ## 🎥 Demo Video
 
-Watch my Week 4 Todo App demonstration:
+Watch my Week 4 project demonstration:
 
-[Watch My Week 4 Todo App Demo](https://drive.google.com/file/d/125NuaBoR5EEVYcT_7RNGJmD0c-izGZ5E/view?usp=drive_link)
+[Watch the LearnHub Demo Video](https://drive.google.com/file/d/125NuaBoR5EEVYcT_7RNGJmD0c-izGZ5E/view?usp=drive_link)
 
 ## 👩‍💻 Author
 
